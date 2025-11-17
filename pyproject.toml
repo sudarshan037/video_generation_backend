@@ -5,7 +5,10 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "fastapi>=0.121.2",
+    "azure-storage-blob==12.23.1",
+    "dotenv>=0.9.9",
+    "fastapi[standard]>=0.121.2",
+    "gunicorn>=23.0.0",
     "python-multipart>=0.0.20",
     "requests>=2.32.5",
     "uvicorn>=0.23.2",

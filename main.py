@@ -3,6 +3,7 @@ import uuid
 import json
 import base64
 import uvicorn
+from dotenv import load_dotenv
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -17,6 +18,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+load_dotenv()
 
 @app.get("/health")
 async def health():
@@ -59,7 +62,7 @@ async def process(
     
     return {
         "request_id": payload["request_id"],
-        "blob_path": video_path
+        "blob_path": f"{os.getenv('BLOB_BASE_URL')}/mugenverse/{video_path}?{os.getenv('BLOB_SAS_TOKEN')}"
     }
 
 @app.post("/process/v2/image_to_video", tags=["Process"])
@@ -99,7 +102,7 @@ async def process(
     
     return {
         "request_id": payload["request_id"],
-        "blob_path": video_path
+        "blob_path": f"{os.getenv('BLOB_BASE_URL')}/mugenverse/{video_path}?{os.getenv('BLOB_SAS_TOKEN')}"
     }
 
 
@@ -140,7 +143,7 @@ async def process(
     
     return {
         "request_id": payload["request_id"],
-        "blob_path": video_path
+        "blob_path": f"{os.getenv('BLOB_BASE_URL')}/mugenverse/{video_path}?{os.getenv('BLOB_SAS_TOKEN')}"
     }
 
 if __name__ == "__main__":
