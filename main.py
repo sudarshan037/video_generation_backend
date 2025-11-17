@@ -22,10 +22,10 @@ app.add_middleware(
 async def health():
     return {"status": "ok"}
 
-# image to video
-# text to video
+# image to video -> I2V-A14B -> Image-to-Video MoE model, supports 480P & 720P
+# text to video -> NOT IMPLEMENTING
 # effects, extend
-# first and last frame
+# first and last frame -> FLF2V-14B
 # references
 # repaint
 # inpaint
@@ -52,7 +52,6 @@ async def process(
             f.write(content)
 
     video_path = f"data/generated_videos/{payload['request_id']}.mp4"
-    print(video_path)
     # TODO: generate video from image
     if not os.path.isfile(video_path):
         return {"error": "Video file not found"}
@@ -69,7 +68,7 @@ async def process(
     image: UploadFile = File(None),
 ):
     """
-    Mock endpoint for image to video generation.
+    image and prompt to video generation.
     request: data: JSON string, image: uploaded image file
     response: Blob Path of generated video
     """
@@ -85,7 +84,55 @@ async def process(
             f.write(content)
 
     video_path = f"data/generated_videos/{payload['request_id']}.mp4"
-    print(video_path)
+    # TODO: generate video from image
+    # python generate.py --task i2v-A14B --size 1280*720 --ckpt_dir ./Wan2.2-I2V-A14B
+    # --offload_model True --convert_model_dtype --image examples/i2v_input.JPG
+    # --prompt "Summer beach vacation style, a white cat wearing sunglasses sits on a surfboard. The fluffy-furred feline gazes directly at the camera with a relaxed expression. Blurred beach scenery forms the background featuring crystal-clear waters, distant green hills, and a blue sky dotted with white clouds. The cat assumes a naturally relaxed posture, as if savoring the sea breeze and warm sunlight. A close-up shot highlights the feline's intricate details and the refreshing atmosphere of the seaside."
+    
+    # python generate.py --task ti2v-5B --size 1280*704 --ckpt_dir ./Wan2.2-TI2V-5B
+    # --offload_model True --convert_model_dtype --t5_cpu
+    # --prompt "Two anthropomorphic cats in comfy boxing gear and bright gloves fight intensely on a spotlighted stage"
+    
+    if not os.path.isfile(video_path):
+        return {"error": "Video file not found"}
+    # TODO: upload to blob storage
+    
+    return {
+        "request_id": payload["request_id"],
+        "blob_path": video_path
+    }
+
+
+@app.post("/process/v1/first_and_last_frame_to_video", tags=["Mock"])
+async def process(
+    data: str = Form(...),
+    first: UploadFile = File(None),
+    last: UploadFile = File(None),
+):
+    """
+    Mock endpoint for filler video generation.
+    request: data: JSON string, image: uploaded image file
+    response: Blob Path of generated video
+    """
+    payload: Dict = json.loads(data)
+    os.makedirs("data/uploaded_images", exist_ok=True)
+
+    if first and last:
+        first_filename = f"{payload['request_id']}_first.{first.filename.split(".")[-1]}"
+        save_path = os.path.join("data/uploaded_images", first_filename)
+
+        with open(save_path, "wb") as f:
+            content = await first.read()
+            f.write(content)
+
+        last_filename = f"{payload['request_id']}_last.{last.filename.split(".")[-1]}"
+        save_path = os.path.join("data/uploaded_images", last_filename)
+
+        with open(save_path, "wb") as f:
+            content = await last.read()
+            f.write(content)
+
+    video_path = f"data/generated_videos/{payload['request_id']}.mp4"
     # TODO: generate video from image
     if not os.path.isfile(video_path):
         return {"error": "Video file not found"}
