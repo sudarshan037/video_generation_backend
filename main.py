@@ -59,10 +59,22 @@ async def process(
     if not os.path.isfile(video_path):
         return {"error": "Video file not found"}
     # TODO: upload to blob storage
-    
+
     return {
-        "request_id": payload["request_id"],
-        "blob_path": f"{os.getenv('BLOB_BASE_URL')}/mugenverse/{video_path}?{os.getenv('BLOB_SAS_TOKEN')}"
+        "video": [
+            {
+                "name": payload["prompt"],
+                "video_id": payload["request_id"],
+                "options": [
+                    {
+                        "name": video_path,
+                        "url": f"{os.getenv('BLOB_BASE_URL')}/mugenverse/{video_path}?{os.getenv('BLOB_SAS_TOKEN')}",
+                        "transcript": [],
+                    },
+                ],
+            }
+        ],
+        "updated_json_blob_url": "",
     }
 
 @app.post("/process/v2/image_to_video", tags=["Process"])
@@ -101,8 +113,20 @@ async def process(
     # TODO: upload to blob storage
     
     return {
-        "request_id": payload["request_id"],
-        "blob_path": f"{os.getenv('BLOB_BASE_URL')}/mugenverse/{video_path}?{os.getenv('BLOB_SAS_TOKEN')}"
+        "video": [
+            {
+                "name": payload["prompt"],
+                "video_id": payload["request_id"],
+                "options": [
+                    {
+                        "name": video_path,
+                        "url": f"{os.getenv('BLOB_BASE_URL')}/mugenverse/{video_path}?{os.getenv('BLOB_SAS_TOKEN')}",
+                        "transcript": [],
+                    },
+                ],
+            }
+        ],
+        "updated_json_blob_url": "",
     }
 
 
@@ -142,8 +166,20 @@ async def process(
     # TODO: upload to blob storage
     
     return {
-        "request_id": payload["request_id"],
-        "blob_path": f"{os.getenv('BLOB_BASE_URL')}/mugenverse/{video_path}?{os.getenv('BLOB_SAS_TOKEN')}"
+        "video": [
+            {
+                "name": payload["prompt"],
+                "video_id": payload["request_id"],
+                "options": [
+                    {
+                        "name": video_path,
+                        "url": f"{os.getenv('BLOB_BASE_URL')}/mugenverse/{video_path}?{os.getenv('BLOB_SAS_TOKEN')}",
+                        "transcript": [],
+                    },
+                ],
+            }
+        ],
+        "updated_json_blob_url": "",
     }
 
 if __name__ == "__main__":
